@@ -10,7 +10,10 @@ import org.springframework.stereotype.Component;
 @PropertySource("classpath:minio.properties")
 @Component
 public class MinioConfiguration extends MinioClient{
-
+    @Value("${imagebucket}")
+    private String imagebucket;
+    @Value("${Bucket}")
+    private String videobucket;
     @Autowired
      MinioConfiguration(@Value("${port}") int port , @Value("${endpoint}") String endpoint ,
     @Value("${acessKey}") String acessKey,@Value("${secretKey}") String secretKey) {
@@ -21,4 +24,11 @@ public class MinioConfiguration extends MinioClient{
 
     }
 
+    public String getImagebucket() {
+        return imagebucket;
+    }
+
+    public String getVideobucket() {
+        return videobucket;
+    }
 }

@@ -1,31 +1,68 @@
 package dz.univ.bechar.mda.entity;
+import javax.annotation.processing.Generated;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.net.URI;
+import java.time.Duration;
 
-import io.minio.messages.Item;
-import org.apache.commons.io.FileUtils;
-
-
+@Entity
 public class Video {
- private    String id;
- private  final   String name;
- private    String Duration;
- private  final  String thumbnail;
- private   String Stream;
- private  final  String size;
 
-  public Video(Item item){
-     this.name= item.objectName();
-     this.size=FileUtils.byteCountToDisplaySize(item.size());
-     this.thumbnail=genthumbnail();
-     this.Stream= "stream link" ;
+
+    @Id
+    @GeneratedValue()
+    private    Long id;
+
+    private String code;
+    private String name;
+    private Duration Duration;
+     private URI thumbnail;
+     private  URI Stream;
+     private    String size;
+
+    public String getCode() {
+        return code;
     }
 
-    private String genthumbnail(){
-      return "link";
+    public Video setCode(String code) {
+        this.code = code;
+        return this;
+    }
+
+    public Video setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public Video setDuration(Duration duration) {
+        Duration = duration;
+        return this;
+    }
+
+    public Video setThumbnail(URI thumbnail) {
+        this.thumbnail = thumbnail;
+        return this;
+    }
+
+    public Video setStream(URI stream) {
+        Stream = stream;
+        return this;
+    }
+
+    public Video setSize(String size) {
+        this.size = size;
+        return this;
     }
 
 
+    public Video(){}
 
-    public String getId() {
+
+
+
+    public Long getId() {
         return id;
     }
 
@@ -33,15 +70,15 @@ public class Video {
         return name;
     }
 
-    public String getDuration() {
+    public Duration getDuration() {
         return Duration;
     }
 
-    public String getThumbnail() {
+    public URI getThumbnail() {
         return thumbnail;
     }
 
-    public String getStream() {
+    public URI getStream() {
         return Stream;
     }
 

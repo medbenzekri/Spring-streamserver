@@ -1,47 +1,43 @@
 package dz.univ.bechar.mda.service;
-
 import dz.univ.bechar.mda.configuration.MinioConfiguration;
+import dz.univ.bechar.mda.controller.ImageController;
 import dz.univ.bechar.mda.entity.Video;
-import io.minio.ListObjectsArgs;
-import io.minio.Result;
-import io.minio.errors.*;
-import io.minio.messages.Item;
+import dz.univ.bechar.mda.repository.VideoRepository;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import java.net.URI;
 
 @Service
 @PropertySource("classpath:minio.properties")
 public class VideoService {
     @Autowired
     MinioConfiguration client ;
-    @Value("${Bucket}")
-    String bucket;
-    public List<Video> getVideos(){
-        List<Video> videos = new ArrayList<>();
-        ListObjectsArgs args= ListObjectsArgs.builder().bucket(bucket).build();
-        Iterable<Result<Item>> results=client.listObjects(args);
-        results.forEach(result -> {
-            try {
-                videos.add( new Video(result.get()) );
-            } catch (ErrorResponseException | InsufficientDataException
-                     | InternalException | InvalidKeyException |
-                     InvalidResponseException | IOException
-                     | NoSuchAlgorithmException | ServerException |
-                     XmlParserException e) {
-                throw new RuntimeException(e);
-            }
-        });
+    @Autowired
+    VideoRepository repository;
 
-       return videos;
+    public Page<Video> getVideos(Pageable pageable){
 
+       return  repository.findAll(pageable);
+    }
+
+    public URI thumbnailLink(String id){
+    WebMvcLinkBuilder builder= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ImageController.class).getthumbnail(id));
+    return builder.toUri();
+
+    }
+    public String gencode(){
+        int length= 4;
+        boolean useLetters= true;
+        boolean useNumbers= true;
+        String generatedString = RandomStringUtils.random(length, useLetters, useNumbers);
+        if (repository.existsByCode(generatedString))
+            return gencode();
+        return generatedString;
 
     }
 }

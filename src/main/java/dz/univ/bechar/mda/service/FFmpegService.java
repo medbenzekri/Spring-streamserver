@@ -6,21 +6,11 @@ import dz.univ.bechar.mda.configuration.MinioConfiguration;
 import dz.univ.bechar.mda.model.Genratable;
 import io.minio.GetObjectArgs;
 import io.minio.errors.*;
-import org.apache.commons.compress.utils.IOUtils;
-import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.Pipe;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;import java.security.InvalidKeyException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -58,27 +48,19 @@ public class FFmpegService {
 
 
         }
-        public  InputStream generatethumbnail() {
-
-            SeekableInMemoryByteChannel inputChannel;
-            SeekableInMemoryByteChannel outputChannel;
-
-            try {
-
-                inputChannel = new SeekableInMemoryByteChannel(IOUtils.toByteArray(stream));
-                outputChannel = new SeekableInMemoryByteChannel();
+        public  Path generatethumbnail() {
 
 
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            Path image =service.getTempFile();
+
 
             FFmpeg.atPath()
-                    .addInput(ChannelInput.fromChannel(inputChannel).setPosition(10L, TimeUnit.SECONDS))
-                    .addOutput(ChannelOutput.toChannel(null,outputChannel ).setFormat("image2").addArguments("-frames:v", "1"))
+                    .addInput(PipeInput.pumpFrom(stream).setPosition(10L, TimeUnit.SECONDS))
+                    .setOverwriteOutput(true)
+                    .addOutput(UrlOutput.toPath(image).setFormat("image2").addArguments("-frames:v", "1"))
                     .execute();
 
-            return new ByteArrayInputStream(outputChannel.array());
+            return image;
         }
     }
 

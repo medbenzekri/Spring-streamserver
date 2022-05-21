@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Path;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,12 +27,9 @@ public class FFmpegServiceTest {
         assertThat(duration.getSeconds()).isEqualTo(realduration.getSeconds());
     }
     @Test
-    public void givenObjectStream_whenGenerate_Thumbnail() throws IOException {
-       InputStream stream= service.genrator("Monkeys360.mp4").generatethumbnail();
-
-        File targetFile= new File("src/main/resources/image.jpeg");
-        BufferedImage image = ImageIO.read(stream);
-        ImageIO.write(image,"jpeg",targetFile);
+    public void givenpath_whenGenerateThumbnail_thenprintpath()  {
+       Path image= service.genrator("Monkeys360.mp4").generatethumbnail();
+        System.out.println(image.toString());
 
     }
 }

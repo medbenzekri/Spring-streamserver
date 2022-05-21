@@ -18,7 +18,7 @@ import java.security.NoSuchAlgorithmException;
 public class ImageService {
     @Autowired
     MinioConfiguration client;
-    public ResponseEntity<?> getthumbnail(String id){
+    public ResponseEntity<?>   getthumbnail(String id){
         GetPresignedObjectUrlArgs args= GetPresignedObjectUrlArgs.builder().object(id).bucket(client.getImagebucket()).build();
         try {
           String url=  client.getPresignedObjectUrl(args);

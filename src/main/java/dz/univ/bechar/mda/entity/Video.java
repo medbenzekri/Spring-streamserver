@@ -4,7 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.time.Duration;
 
 @Entity
@@ -74,12 +76,12 @@ public class Video {
         return Duration;
     }
 
-    public URI getThumbnail() {
-        return thumbnail;
+    public String getThumbnail() throws MalformedURLException {
+        return thumbnail.getHost();
     }
 
-    public URI getStream() {
-        return Stream;
+    public String getStream() {
+        return Stream.toString();
     }
 
     public String getSize() {

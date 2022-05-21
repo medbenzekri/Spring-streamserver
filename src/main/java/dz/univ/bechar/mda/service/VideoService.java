@@ -1,11 +1,13 @@
 package dz.univ.bechar.mda.service;
 import dz.univ.bechar.mda.configuration.MinioConfiguration;
 import dz.univ.bechar.mda.controller.ImageController;
+import dz.univ.bechar.mda.controller.VideoController;
 import dz.univ.bechar.mda.entity.Video;
 import dz.univ.bechar.mda.repository.VideoRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,14 +21,16 @@ public class VideoService {
     MinioConfiguration client ;
     @Autowired
     VideoRepository repository;
-
+    @Autowired
+    Environment environment;
     public Page<Video> getVideos(Pageable pageable){
 
-       return  repository.findAll(pageable);
+        return  repository.findAll(pageable);
     }
 
     public URI thumbnailLink(String id){
     WebMvcLinkBuilder builder= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ImageController.class).getthumbnail(id));
+        System.out.println(builder.toUri());
     return builder.toUri();
 
     }
@@ -39,5 +43,9 @@ public class VideoService {
             return gencode();
         return generatedString;
 
+    }
+    public URI streamLink(String id){
+        WebMvcLinkBuilder builder= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(VideoController.class).streamvideo(id));
+        return builder.toUri();
     }
 }
